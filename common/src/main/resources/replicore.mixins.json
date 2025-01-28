@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "com.imoonday.replicore.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "client": [
+  ],
+  "mixins": [
+    "EndDragonFightMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

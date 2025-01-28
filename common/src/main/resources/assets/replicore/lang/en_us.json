@@ -1,0 +1,23 @@
+{
+  "block.replicore.replication_table": "Replication Table",
+  "config.replicore.blacklist": "Replication Blacklist",
+  "config.replicore.blacklistEnabled": "Enable Blacklist",
+  "config.replicore.category.common": "Common",
+  "config.replicore.crystalDroppingCount": "Dragon Soul Crystal Dropping Count",
+  "config.replicore.extraCostForEnchantments": "Extra Cost for Copying Enchantments",
+  "config.replicore.firstCrystalDroppingCount": "First Dragon Soul Crystal Dropping Count",
+  "config.replicore.maxDropDistance": "Drop Range for Dragon Soul Crystal",
+  "config.replicore.title": "RepliCore Configuration",
+  "container.replicore.replication": "Replicate Item",
+  "item.replicore.damaged_core": "Damaged Core",
+  "item.replicore.dragon_soul_crystal": "Dragon Soul Crystal",
+  "item.replicore.refined_core": "Refined Core",
+  "item.replicore.standard_core": "Standard Core",
+  "item.replicore.void_core": "Void Core",
+  "itemGroup.replicore": "RepliCore",
+  "message.replicore.blacklist_deny": "This item is forbidden to copy!",
+  "message.replicore.cost": "Replication Cost: %s",
+  "message.replicore.no_full_durability": "Requires full durability!",
+  "message.replicore.reload": "[RepliCore] Configuration reloaded",
+  "message.replicore.tier_mismatch": "The current core cannot copy this item!"
+}

@@ -1,0 +1,23 @@
+{
+  "block.replicore.replication_table": "复制台",
+  "config.replicore.blacklist": "复制黑名单",
+  "config.replicore.blacklistEnabled": "启用黑名单",
+  "config.replicore.category.common": "通用",
+  "config.replicore.crystalDroppingCount": "龙魂结晶掉落数量",
+  "config.replicore.extraCostForEnchantments": "复制附魔的额外费用",
+  "config.replicore.firstCrystalDroppingCount": "龙魂结晶首次掉落数量",
+  "config.replicore.maxDropDistance": "龙魂结晶掉落范围",
+  "config.replicore.title": "复制核心配置",
+  "container.replicore.replication": "复制物品",
+  "item.replicore.damaged_core": "破损核心",
+  "item.replicore.dragon_soul_crystal": "龙魂结晶",
+  "item.replicore.refined_core": "精铸核心",
+  "item.replicore.standard_core": "标准核心",
+  "item.replicore.void_core": "虚空核心",
+  "itemGroup.replicore": "复制核心",
+  "message.replicore.blacklist_deny": "此物品被禁止复制！",
+  "message.replicore.cost": "复制花费：%s",
+  "message.replicore.no_full_durability": "需要完整的耐久！",
+  "message.replicore.reload": "[复制核心] 已重新加载配置",
+  "message.replicore.tier_mismatch": "当前核心无法复制此物品！"
+}

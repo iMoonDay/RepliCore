@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "replicore:block/replication_table",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "replicore:block/replication_table",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "replicore:block/replication_table"
+    },
+    "facing=west": {
+      "model": "replicore:block/replication_table",
+      "y": 90
+    }
+  }
+}

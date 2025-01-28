@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " D ",
+    "DCD",
+    " D "
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:dragon_breath"
+    },
+    "C": {
+      "item": "replicore:refined_core"
+    }
+  },
+  "result": {
+    "item": "replicore:void_core"
+  }
+}

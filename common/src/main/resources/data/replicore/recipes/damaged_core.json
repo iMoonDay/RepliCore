@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " O ",
+    "OCO",
+    " O "
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "C": {
+      "item": "replicore:dragon_soul_crystal"
+    }
+  },
+  "result": {
+    "item": "replicore:damaged_core",
+    "count": 2
+  }
+}

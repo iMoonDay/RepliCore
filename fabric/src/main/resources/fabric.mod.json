@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "replicore",
+  "version": "${version}",
+  "name": "RepliCore",
+  "description": "Provides a method for item duplication",
+  "authors": [
+    "iMoonDay"
+  ],
+  "contact": {
+    "homepage": ""
+  },
+  "license": "MIT",
+  "icon": "assets/replicore/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.imoonday.replicore.fabric.RepliCoreFabric"
+    ],
+    "client": [
+      "com.imoonday.replicore.fabric.client.RepliCoreFabricClient"
+    ],
+    "modmenu": [
+      "com.imoonday.replicore.fabric.compat.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "replicore.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20",
+    "java": ">=17",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "cloth-config": "*"
+  }
+}
