@@ -12,6 +12,10 @@ public class ModMenuType {
 
     public static final Supplier<MenuType<ReplicationMenu>> REPLICATION = PlatformHelper.registerMenu("replication", ReplicationMenu::new);
 
+    public static void init() {
+
+    }
+
     public interface MenuSupplier<T extends AbstractContainerMenu> {
 
         T create(int i, Inventory inventory);

@@ -3,6 +3,7 @@ package com.imoonday.replicore;
 import com.imoonday.replicore.init.ModBlocks;
 import com.imoonday.replicore.init.ModItemGroup;
 import com.imoonday.replicore.init.ModItems;
+import com.imoonday.replicore.init.ModMenuType;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
@@ -17,6 +18,7 @@ public final class RepliCore {
         ModBlocks.init();
         ModItems.init();
         ModItemGroup.init();
+        ModMenuType.init();
     }
 
     public static ResourceLocation id(String path) {

@@ -9,9 +9,9 @@ version = "${version}"
 displayName = "RepliCore"
 authors = "iMoonDay"
 description = '''
-Provides a method for item duplication
+Provides a method for item replication
 '''
-#logoFile = ""
+logoFile = "assets/replicore/icon.png"
 
 [[dependencies.replicore]]
 modId = "forge"

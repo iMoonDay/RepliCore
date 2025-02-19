@@ -2,6 +2,7 @@ package com.imoonday.replicore.forge;
 
 import com.imoonday.replicore.EventHandler;
 import com.imoonday.replicore.RepliCore;
+import com.imoonday.replicore.client.ModConfigScreenFactory;
 import com.imoonday.replicore.command.CommandHandler;
 import com.imoonday.replicore.forge.network.ForgeNetworkHandler;
 import net.minecraft.core.registries.Registries;
@@ -9,14 +10,18 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -37,6 +42,12 @@ public final class RepliCoreForge {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         ITEMS.register(modEventBus);
         BLOCKS.register(modEventBus);
+        CREATIVE_MODE_TABS.register(modEventBus);
+        MENU_TYPES.register(modEventBus);
+
+        if (FMLEnvironment.dist == Dist.CLIENT && RepliCore.clothConfig) {
+            ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class, () -> new ConfigScreenHandler.ConfigScreenFactory(ModConfigScreenFactory::create));
+        }
     }
 
     @SubscribeEvent

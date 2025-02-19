@@ -22,9 +22,6 @@ import java.util.Map;
 
 public class ReplicationMenu extends ItemCombinerMenu {
 
-    public static final int INPUT_SLOT = 0;
-    public static final int ADDITIONAL_SLOT = 1;
-    public static final int RESULT_SLOT = 2;
     private final Level level;
     private final DataSlot cost = DataSlot.standalone();
 

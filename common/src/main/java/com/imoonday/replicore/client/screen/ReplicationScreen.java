@@ -42,45 +42,45 @@ public class ReplicationScreen extends ItemCombinerScreen<ReplicationMenu> {
         super.renderLabels(guiGraphics, mouseX, mouseY);
 
         Slot targetSlot = this.menu.getSlot(0);
-        if (targetSlot.hasItem()) {
-            int color = 16736352;
-            Component component = null;
-            ItemStack stack = targetSlot.getItem();
-            if (ModConfig.getClientCache().isBlacklisted(stack)) {
-                component = BLACKLIST_DENY_TEXT;
-            } else {
-                Slot coreSlot = this.menu.getSlot(1);
-                if (coreSlot.hasItem()) {
-                    ItemStack core = coreSlot.getItem();
-                    if (core.getItem() instanceof CoreItem coreItem) {
+        if (!targetSlot.hasItem()) return;
+
+        int color = 0XFF6060;
+        Component component = null;
+        ItemStack stack = targetSlot.getItem();
+        if (ModConfig.getClientCache().isBlacklisted(stack)) {
+            component = BLACKLIST_DENY_TEXT;
+        } else {
+            Slot coreSlot = this.menu.getSlot(1);
+            if (coreSlot.hasItem()) {
+                ItemStack core = coreSlot.getItem();
+                if (core.getItem() instanceof CoreItem coreItem) {
+                    if (!this.menu.getSlot(2).hasItem()) {
                         CoreTier tier = coreItem.getTier();
-                        if (!this.menu.getSlot(2).hasItem()) {
-                            if (!tier.canDuplicate(stack)) {
-                                if (tier.getTier() < 4 && stack.isDamaged()) {
-                                    component = NO_FULL_DURABILITY_TEXT;
-                                } else {
-                                    component = TIER_MISMATCH_TEXT;
-                                }
+                        if (!tier.canDuplicate(stack)) {
+                            if (tier.getTier() < 4 && stack.isDamaged()) {
+                                component = NO_FULL_DURABILITY_TEXT;
+                            } else {
+                                component = TIER_MISMATCH_TEXT;
                             }
-                        } else {
-                            int cost = this.menu.getCost();
-                            if (cost > 0) {
-                                component = Component.translatable("message.replicore.cost", cost);
-                                if (this.menu.getSlot(2).mayPickup(this.player)) {
-                                    color = 8453920;
-                                }
+                        }
+                    } else {
+                        int cost = this.menu.getCost();
+                        if (cost > 0) {
+                            component = Component.translatable("message.replicore.cost", cost);
+                            if (this.menu.getSlot(2).mayPickup(this.player)) {
+                                color = 0X80FF20;
                             }
                         }
                     }
                 }
             }
+        }
 
-            if (component != null) {
-                int x = this.imageWidth - 8 - this.font.width(component) - 2;
-                int y = 69;
-                guiGraphics.fill(x - 2, 67, this.imageWidth - 8, 79, 1325400064);
-                guiGraphics.drawString(this.font, component, x, y, color);
-            }
+        if (component != null) {
+            int x = this.imageWidth - 8 - this.font.width(component) - 2;
+            int y = 69;
+            guiGraphics.fill(x - 2, 67, this.imageWidth - 8, 79, 1325400064);
+            guiGraphics.drawString(this.font, component, x, y, color);
         }
     }
 

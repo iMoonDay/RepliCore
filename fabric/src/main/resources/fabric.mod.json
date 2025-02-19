@@ -3,7 +3,7 @@
   "id": "replicore",
   "version": "${version}",
   "name": "RepliCore",
-  "description": "Provides a method for item duplication",
+  "description": "Provides a method for item replication",
   "authors": [
     "iMoonDay"
   ],

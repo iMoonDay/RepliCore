@@ -11,7 +11,7 @@ public class CommandHandler {
 
     public static void registerCommands(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext registryAccess, Commands.CommandSelection environment) {
         dispatcher.register(
-                literal("cloudstorage")
+                literal("replicore")
                         .requires(source -> source.hasPermission(2))
                         .then(ReloadCommand.builder())
         );
