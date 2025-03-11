@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 
@@ -30,13 +31,13 @@ public class ModConfig {
     public List<String> blacklist = new ArrayList<>();
     public int crystalDroppingCount = 1;
     public int firstCrystalDroppingCount = 3;
-    public boolean extraCostForEnchantments = true;
     public int maxDropDistance = 256;
+    public CostConfig costConfig = new CostConfig();
 
     public boolean isBlacklisted(ItemStack stack) {
         if (!blacklistEnabled) return false;
-        String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        return blacklist.contains(itemId);
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return blacklist.contains(key.toString()) || key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) && blacklist.contains(key.getPath());
     }
 
     public CompoundTag save(CompoundTag tag) {
@@ -48,8 +49,8 @@ public class ModConfig {
         tag.put("blacklist", blacklistTag);
         tag.putInt("crystalDroppingCount", crystalDroppingCount);
         tag.putInt("firstCrystalDroppingCount", firstCrystalDroppingCount);
-        tag.putBoolean("extraCostForEnchantments", extraCostForEnchantments);
         tag.putInt("maxDropDistance", maxDropDistance);
+        tag.put("costConfig", costConfig.writeNbt(new CompoundTag()));
         return tag;
     }
 
@@ -71,11 +72,12 @@ public class ModConfig {
         if (tag.contains("firstCrystalDroppingCount")) {
             firstCrystalDroppingCount = tag.getInt("firstCrystalDroppingCount");
         }
-        if (tag.contains("extraCostForEnchantments")) {
-            extraCostForEnchantments = tag.getBoolean("extraCostForEnchantments");
-        }
         if (tag.contains("maxDropDistance")) {
             maxDropDistance = tag.getInt("maxDropDistance");
+        }
+        if (tag.contains("costConfig")) {
+            CompoundTag configTag = tag.getCompound("costConfig");
+            costConfig = costConfig != null ? costConfig.readNbt(configTag) : CostConfig.fromNbt(configTag);
         }
     }
 
@@ -84,8 +86,8 @@ public class ModConfig {
         blacklist.clear();
         crystalDroppingCount = 1;
         firstCrystalDroppingCount = 3;
-        extraCostForEnchantments = true;
         maxDropDistance = 256;
+        costConfig = new CostConfig();
     }
 
     public static ModConfig get(boolean isClient) {

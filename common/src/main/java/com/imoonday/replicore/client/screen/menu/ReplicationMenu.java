@@ -11,14 +11,10 @@ import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.ItemCombinerMenu;
 import net.minecraft.world.inventory.ItemCombinerMenuSlotDefinition;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
 
 public class ReplicationMenu extends ItemCombinerMenu {
 
@@ -32,13 +28,13 @@ public class ReplicationMenu extends ItemCombinerMenu {
     public ReplicationMenu(int containerId, Inventory playerInventory, ContainerLevelAccess access) {
         super(ModMenuType.REPLICATION.get(), containerId, playerInventory, access);
         this.level = playerInventory.player.level();
-        this.addDataSlot(this.cost);
+        this.addDataSlot(this.cost).set(-1);
     }
 
     @Override
     protected boolean mayPickup(Player player, boolean hasStack) {
         int cost = this.cost.get();
-        return (player.getAbilities().instabuild || player.experienceLevel >= cost) && cost > 0;
+        return (player.getAbilities().instabuild || player.experienceLevel >= cost) && cost >= 0;
     }
 
     @Override
@@ -53,7 +49,7 @@ public class ReplicationMenu extends ItemCombinerMenu {
             this.inputSlots.setItem(1, core);
         }
 
-        this.cost.set(0);
+        this.cost.set(-1);
         this.access.execute((level, blockPos) -> level.levelEvent(LevelEvent.SOUND_SMITHING_TABLE_USED, blockPos, 0));
     }
 
@@ -65,7 +61,7 @@ public class ReplicationMenu extends ItemCombinerMenu {
     @Override
     public void createResult() {
         ItemStack target = this.inputSlots.getItem(0);
-        this.cost.set(0);
+        this.cost.set(-1);
         ModConfig config = ModConfig.get(level.isClientSide);
         if (target.isEmpty() || config.isBlacklisted(target)) {
             this.resultSlots.setItem(0, ItemStack.EMPTY);
@@ -74,7 +70,7 @@ public class ReplicationMenu extends ItemCombinerMenu {
             if (!core.isEmpty() && core.getItem() instanceof CoreItem coreItem && coreItem.canDuplicate(target)) {
                 ItemStack copied = target.copy();
                 this.resultSlots.setItem(0, copied);
-                int cost = calculateCost(target, config.extraCostForEnchantments);
+                int cost = config.costConfig.calculateCost(target);
                 this.cost.set(cost);
             } else {
                 this.resultSlots.setItem(0, ItemStack.EMPTY);
@@ -82,22 +78,6 @@ public class ReplicationMenu extends ItemCombinerMenu {
         }
 
         this.broadcastChanges();
-    }
-
-    private int calculateCost(ItemStack stack, boolean extraCostForEnchantments) {
-        int cost = stack.getCount();
-        if (cost > 1) {
-            cost = cost / 4 + (cost % 4 == 0 ? 0 : 1);
-        }
-        if (extraCostForEnchantments) {
-            Map<Enchantment, Integer> enchantments = EnchantmentHelper.getEnchantments(stack);
-            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                Enchantment enchantment = entry.getKey();
-                if (enchantment.isCurse()) continue;
-                cost += entry.getValue() * 2;
-            }
-        }
-        return cost;
     }
 
     @NotNull

@@ -4,6 +4,7 @@ import com.imoonday.replicore.RepliCore;
 import com.imoonday.replicore.client.screen.menu.ReplicationMenu;
 import com.imoonday.replicore.config.ModConfig;
 import com.imoonday.replicore.core.CoreTier;
+import com.imoonday.replicore.core.CoreTiers;
 import com.imoonday.replicore.item.CoreItem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.ItemCombinerScreen;
@@ -57,7 +58,7 @@ public class ReplicationScreen extends ItemCombinerScreen<ReplicationMenu> {
                     if (!this.menu.getSlot(2).hasItem()) {
                         CoreTier tier = coreItem.getTier();
                         if (!tier.canDuplicate(stack)) {
-                            if (tier.getTier() < 4 && stack.isDamaged()) {
+                            if (tier.getTier() < CoreTiers.VOID.getTier() && stack.isDamaged()) {
                                 component = NO_FULL_DURABILITY_TEXT;
                             } else {
                                 component = TIER_MISMATCH_TEXT;
@@ -65,7 +66,7 @@ public class ReplicationScreen extends ItemCombinerScreen<ReplicationMenu> {
                         }
                     } else {
                         int cost = this.menu.getCost();
-                        if (cost > 0) {
+                        if (cost >= 0) {
                             component = Component.translatable("message.replicore.cost", cost);
                             if (this.menu.getSlot(2).mayPickup(this.player)) {
                                 color = 0X80FF20;
