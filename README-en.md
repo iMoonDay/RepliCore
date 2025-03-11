@@ -1,5 +1,7 @@
 # RepliCore
 
+[中文](README.md)
+
 ## Basic Gameplay
 
 1. Added replication cores of **different qualities** to copy items under various conditions.
