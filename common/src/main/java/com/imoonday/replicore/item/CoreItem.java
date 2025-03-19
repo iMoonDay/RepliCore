@@ -2,6 +2,7 @@ package com.imoonday.replicore.item;
 
 import com.imoonday.replicore.core.CoreTier;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,11 +15,9 @@ import java.util.List;
 public class CoreItem extends Item {
 
     private final CoreTier tier;
-    private final int tooltipLines;
 
-    public CoreItem(CoreTier tier, int tooltipLines, Properties properties) {
+    public CoreItem(CoreTier tier, Properties properties) {
         super(properties);
-        this.tooltipLines = tooltipLines;
         this.tier = tier;
     }
 
@@ -33,8 +32,16 @@ public class CoreItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltipComponents, TooltipFlag isAdvanced) {
         super.appendHoverText(stack, level, tooltipComponents, isAdvanced);
-        for (int i = 1; i <= tooltipLines; i++) {
-            tooltipComponents.add(Component.translatable(this.getDescriptionId() + ".tooltip." + i).withStyle(ChatFormatting.GRAY));
+        int i = 1;
+        String prefix = getTooltipKeyPrefix();
+        String key = prefix + i;
+        while (I18n.exists(key)) {
+            tooltipComponents.add(Component.translatable(key).withStyle(ChatFormatting.GRAY));
+            key = prefix + ++i;
         }
+    }
+
+    public String getTooltipKeyPrefix() {
+        return this.getDescriptionId() + ".tooltip.";
     }
 }

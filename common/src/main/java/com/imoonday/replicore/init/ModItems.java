@@ -19,10 +19,10 @@ public class ModItems {
     public static final Supplier<BlockItem> REPLICATION_TABLE = PlatformHelper.registerItem("replication_table", () -> new BlockItem(ModBlocks.REPLICATION_TABLE.get(), new Item.Properties()));
 
     //复制核心
-    public static final Supplier<CoreItem> DAMAGED_CORE = PlatformHelper.registerItem("damaged_core", () -> new CoreItem(CoreTiers.DAMAGED, 4, new Item.Properties().stacksTo(1)));
-    public static final Supplier<CoreItem> STANDARD_CORE = PlatformHelper.registerItem("standard_core", () -> new CoreItem(CoreTiers.STANDARD, 4, new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
-    public static final Supplier<CoreItem> REFINED_CORE = PlatformHelper.registerItem("refined_core", () -> new CoreItem(CoreTiers.REFINED, 3, new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
-    public static final Supplier<CoreItem> VOID_CORE = PlatformHelper.registerItem("void_core", () -> new CoreItem(CoreTiers.VOID, 1, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
+    public static final Supplier<CoreItem> DAMAGED_CORE = PlatformHelper.registerItem("damaged_core", () -> new CoreItem(CoreTiers.DAMAGED, new Item.Properties().stacksTo(16)));
+    public static final Supplier<CoreItem> STANDARD_CORE = PlatformHelper.registerItem("standard_core", () -> new CoreItem(CoreTiers.STANDARD, new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
+    public static final Supplier<CoreItem> REFINED_CORE = PlatformHelper.registerItem("refined_core", () -> new CoreItem(CoreTiers.REFINED, new Item.Properties().stacksTo(16).rarity(Rarity.RARE)));
+    public static final Supplier<CoreItem> VOID_CORE = PlatformHelper.registerItem("void_core", () -> new CoreItem(CoreTiers.VOID, new Item.Properties().stacksTo(16).rarity(Rarity.EPIC)));
 
     public static void init() {
 

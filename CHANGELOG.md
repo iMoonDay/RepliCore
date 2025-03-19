@@ -1,0 +1,1 @@
+1. Replication cores can stack to 16

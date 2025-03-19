@@ -49,7 +49,6 @@ public class ReplicationMenu extends ItemCombinerMenu {
             this.inputSlots.setItem(1, core);
         }
 
-        this.cost.set(-1);
         this.access.execute((level, blockPos) -> level.levelEvent(LevelEvent.SOUND_SMITHING_TABLE_USED, blockPos, 0));
     }
 
