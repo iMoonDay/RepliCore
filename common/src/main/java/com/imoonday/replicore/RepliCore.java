@@ -19,6 +19,7 @@ public final class RepliCore {
         ModItems.init();
         ModItemGroup.init();
         ModMenuType.init();
+        EventHandler.onReload(null);
     }
 
     public static ResourceLocation id(String path) {

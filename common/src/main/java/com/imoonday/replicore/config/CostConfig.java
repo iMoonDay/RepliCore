@@ -1,5 +1,6 @@
 package com.imoonday.replicore.config;
 
+import net.minecraft.Util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -7,11 +8,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class CostConfig {
@@ -22,19 +27,12 @@ public class CostConfig {
     private double defaultEnchantmentCost = 2.0;
     private boolean ignoreCurses = true;
     private Map<String, Double> customEnchantmentCosts = new HashMap<>();
-
-    public CostConfig() {
-
-    }
-
-    public CostConfig(double defaultCost, Map<String, Double> customCosts, boolean calculateEnchantmentCosts, double defaultEnchantmentCost, boolean ignoreCurses, Map<String, Double> customEnchantmentCosts) {
-        this.defaultCost = defaultCost;
-        this.customCosts = customCosts;
-        this.calculateEnchantmentCosts = calculateEnchantmentCosts;
-        this.defaultEnchantmentCost = defaultEnchantmentCost;
-        this.ignoreCurses = ignoreCurses;
-        this.customEnchantmentCosts = customEnchantmentCosts;
-    }
+    private ContainerConfig defaultContainerConfig = new ContainerConfig();
+    private Map<String, ContainerConfig> customContainerConfigs = Util.make(new HashMap<>(), map -> {
+        ContainerConfig config = new ContainerConfig();
+        config.setTag("Items");
+        map.put("minecraft:bundle", config);
+    });
 
     public double getDefaultCost() {
         return defaultCost;
@@ -100,35 +98,58 @@ public class CostConfig {
         this.customEnchantmentCosts = mapListToMap(customEnchantmentCostList);
     }
 
-    public int calculateCost(ItemStack stack) {
-        if (stack.isEmpty() || stack.getCount() <= 0) {
-            return -1;
+    public ContainerConfig getDefaultContainerConfig() {
+        return defaultContainerConfig;
+    }
+
+    public void setDefaultContainerConfig(ContainerConfig defaultContainerConfig) {
+        this.defaultContainerConfig = defaultContainerConfig;
+    }
+
+    public Map<String, ContainerConfig> getCustomContainerConfigs() {
+        return customContainerConfigs;
+    }
+
+    public void setCustomContainerConfigs(Map<String, ContainerConfig> customContainerConfigs) {
+        this.customContainerConfigs = customContainerConfigs;
+    }
+
+    public int calculateTotalCost(ItemStack stack, Predicate<ItemStack> except) {
+        if (stack.isEmpty() || except.test(stack)) return -1;
+
+        double cost = calculateBaseCost(stack);
+
+        ResourceLocation key = getItemKey(stack.getItem());
+        ContainerConfig config = Objects.requireNonNullElseGet(getMatchedValue(customContainerConfigs, key), () -> defaultContainerConfig);
+        if (config.isEnabled() && stack.hasTag()) {
+            List<ItemStack> contents = config.parseContainedItems(stack);
+
+            if (config.isExcludeOriginalCost() && !contents.isEmpty()) {
+                cost = 0;
+            }
+
+            for (ItemStack content : contents) {
+                if (except.test(content)) return -1;
+
+                double contentCost = config.isRecursive() ? calculateTotalCost(content, except) : calculateBaseCost(content);
+                if (contentCost > 0) {
+                    cost += contentCost;
+                }
+            }
         }
-        double cost = calculateItemCost(stack);
-        if (calculateEnchantmentCosts) {
-            cost += calculateEnchantmentCost(stack);
-        }
-        if (cost < 0) {
-            cost = 0;
-        }
-        return (int) Math.ceil(cost);
+
+        return (int) Math.ceil(Math.max(0, cost));
+    }
+
+    public double calculateBaseCost(ItemStack stack) {
+        return calculateItemCost(stack) + (calculateEnchantmentCosts ? calculateEnchantmentCost(stack) : 0);
     }
 
     public double calculateItemCost(ItemStack stack) {
-        int count = stack.getCount();
-        Item item = stack.getItem();
-        ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
-        double costPerCount = defaultCost;
-        String id = key.toString();
-        if (customCosts.containsKey(id)) {
-            costPerCount = customCosts.get(id);
-        } else if (key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
-            String path = key.getPath();
-            if (customCosts.containsKey(path)) {
-                costPerCount = customCosts.get(path);
-            }
-        }
-        return count * costPerCount;
+        ResourceLocation key = getItemKey(stack.getItem());
+        Double value = getMatchedValue(customCosts, key);
+        double costPerCount = Objects.requireNonNullElseGet(value, () -> defaultCost);
+        return stack.getCount() * costPerCount;
     }
 
     public double calculateEnchantmentCost(ItemStack stack) {
@@ -138,56 +159,42 @@ public class CostConfig {
             Enchantment enchantment = entry.getKey();
             if (ignoreCurses && enchantment.isCurse()) continue;
 
-            int level = entry.getValue();
             ResourceLocation key = BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
             double costPerLvl = defaultEnchantmentCost;
             if (key != null) {
-                String id = key.toString();
-                if (customEnchantmentCosts.containsKey(id)) {
-                    costPerLvl = customEnchantmentCosts.get(id);
-                } else if (key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
-                    String path = key.getPath();
-                    if (customEnchantmentCosts.containsKey(path)) {
-                        costPerLvl = customEnchantmentCosts.get(path);
-                    }
+                Double value = getMatchedValue(customEnchantmentCosts, key);
+                if (value != null) {
+                    costPerLvl = value;
                 }
             }
-            cost += level * costPerLvl;
+            cost += entry.getValue() * costPerLvl;
         }
         return cost;
     }
 
     public CompoundTag writeNbt(CompoundTag tag) {
         tag.putDouble("defaultCost", defaultCost);
-        tag.put("customCosts", mapToNbt(customCosts));
+        tag.put("customCosts", mapToNbt(customCosts, tag::putDouble));
         tag.putBoolean("calculateEnchantmentCosts", calculateEnchantmentCosts);
         tag.putDouble("defaultEnchantmentCost", defaultEnchantmentCost);
         tag.putBoolean("ignoreCurses", ignoreCurses);
-        tag.put("customEnchantmentCosts", mapToNbt(customEnchantmentCosts));
+        tag.put("customEnchantmentCosts", mapToNbt(customEnchantmentCosts, tag::putDouble));
+        tag.put("defaultContainerConfig", defaultContainerConfig.writeNbt());
+        tag.put("customContainerConfigs", mapToNbt(customContainerConfigs, (key, value) -> tag.put(key, value.writeNbt())));
         return tag;
     }
 
     public CostConfig readNbt(CompoundTag tag) {
-        if (tag == null) {
-            return this;
-        }
-        if (tag.contains("defaultCost")) {
-            defaultCost = tag.getDouble("defaultCost");
-        }
-        if (tag.contains("customCosts")) {
-            customCosts = parseMap(tag.getCompound("customCosts"));
-        }
-        if (tag.contains("calculateEnchantmentCosts")) {
-            calculateEnchantmentCosts = tag.getBoolean("calculateEnchantmentCosts");
-        }
-        if (tag.contains("defaultEnchantmentCost")) {
-            defaultEnchantmentCost = tag.getDouble("defaultEnchantmentCost");
-        }
-        if (tag.contains("ignoreCurses")) {
-            ignoreCurses = tag.getBoolean("ignoreCurses");
-        }
-        if (tag.contains("customEnchantmentCosts")) {
-            customEnchantmentCosts = parseMap(tag.getCompound("customEnchantmentCosts"));
+        if (tag == null) return this;
+        if (tag.contains("defaultCost")) defaultCost = tag.getDouble("defaultCost");
+        if (tag.contains("customCosts")) customCosts = parseMap(tag.getCompound("customCosts"), CompoundTag::getDouble);
+        if (tag.contains("calculateEnchantmentCosts")) calculateEnchantmentCosts = tag.getBoolean("calculateEnchantmentCosts");
+        if (tag.contains("defaultEnchantmentCost")) defaultEnchantmentCost = tag.getDouble("defaultEnchantmentCost");
+        if (tag.contains("ignoreCurses")) ignoreCurses = tag.getBoolean("ignoreCurses");
+        if (tag.contains("customEnchantmentCosts")) customEnchantmentCosts = parseMap(tag.getCompound("customEnchantmentCosts"), CompoundTag::getDouble);
+        if (tag.contains("defaultContainerConfig")) defaultContainerConfig = ContainerConfig.fromNbt(tag.getCompound("defaultContainerConfig"));
+        if (tag.contains("customContainerConfigs")) {
+            customContainerConfigs = parseMap(tag.getCompound("customContainerConfigs"), (tag1, key) -> ContainerConfig.fromNbt(tag1.getCompound(key)));
         }
         return this;
     }
@@ -196,18 +203,14 @@ public class CostConfig {
         return new CostConfig().readNbt(tag);
     }
 
-    private static CompoundTag mapToNbt(Map<String, Double> map) {
+    private static <T> CompoundTag mapToNbt(Map<String, T> map, BiConsumer<String, T> consumer) {
         CompoundTag tag = new CompoundTag();
-        map.forEach(tag::putDouble);
+        map.forEach(consumer);
         return tag;
     }
 
-    private static Map<String, Double> parseMap(CompoundTag tag) {
-        Map<String, Double> map = new HashMap<>();
-        for (String key : tag.getAllKeys()) {
-            map.put(key, tag.getDouble(key));
-        }
-        return map;
+    private static <T> Map<String, T> parseMap(CompoundTag tag, BiFunction<CompoundTag, String, T> merger) {
+        return tag.getAllKeys().stream().collect(Collectors.toMap(key -> key, key -> merger.apply(tag, key), (a, b) -> b));
     }
 
     private static List<String> mapMapToList(Map<String, Double> map) {
@@ -247,6 +250,24 @@ public class CostConfig {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    public static ResourceLocation getItemKey(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item);
+    }
+
+    @Nullable
+    private static <T> T getMatchedValue(Map<String, T> map, ResourceLocation key) {
+        String id = key.toString();
+        if (map.containsKey(id)) {
+            return map.get(id);
+        } else if (key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)) {
+            String path = key.getPath();
+            if (map.containsKey(path)) {
+                return map.get(path);
+            }
+        }
+        return null;
     }
 
     @Override

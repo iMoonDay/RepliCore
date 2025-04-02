@@ -3,9 +3,9 @@ package com.imoonday.replicore.forge;
 import com.imoonday.replicore.EventHandler;
 import com.imoonday.replicore.RepliCore;
 import com.imoonday.replicore.client.ModConfigScreenFactory;
-import com.imoonday.replicore.command.CommandHandler;
 import com.imoonday.replicore.forge.network.ForgeNetworkHandler;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.util.Unit;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ConfigScreenHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -24,6 +24,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 @Mod(RepliCore.MOD_ID)
 public final class RepliCoreForge {
@@ -61,7 +62,7 @@ public final class RepliCoreForge {
     }
 
     @SubscribeEvent
-    public void onRegisterCommands(RegisterCommandsEvent event) {
-        CommandHandler.registerCommands(event.getDispatcher(), event.getBuildContext(), event.getCommandSelection());
+    public void onReload(AddReloadListenerEvent event) {
+        event.addListener((preparationBarrier, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor) -> preparationBarrier.wait(Unit.INSTANCE).thenRunAsync(() -> EventHandler.onReload(ServerLifecycleHooks.getCurrentServer()), gameExecutor));
     }
 }

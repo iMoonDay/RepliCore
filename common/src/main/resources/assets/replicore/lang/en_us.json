@@ -39,7 +39,6 @@
   "message.replicore.blacklist_deny": "This item is restricted from replication!",
   "message.replicore.cost": "Replication Cost: %s",
   "message.replicore.no_full_durability": "Item must be at full durability!",
-  "message.replicore.reload": "[RepliCore] Configuration reloaded",
   "message.replicore.tier_mismatch": "Incompatible core tier for this item!",
   "modmenu.descriptionTranslation.replicore": "Provides a method for item replication",
   "modmenu.nameTranslation.replicore": "RepliCore"

@@ -3,6 +3,7 @@ package com.imoonday.replicore.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.imoonday.replicore.PlatformHelper;
+import com.imoonday.replicore.item.CoreItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -29,28 +30,36 @@ public class ModConfig {
 
     public boolean blacklistEnabled = false;
     public List<String> blacklist = new ArrayList<>();
+    public boolean forbidReplicatingCores = true;
     public int crystalDroppingCount = 1;
     public int firstCrystalDroppingCount = 3;
     public int maxDropDistance = 256;
     public CostConfig costConfig = new CostConfig();
 
     public boolean isBlacklisted(ItemStack stack) {
+        if (forbidReplicatingCores && stack.getItem() instanceof CoreItem) return true;
         if (!blacklistEnabled) return false;
         ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
         return blacklist.contains(key.toString()) || key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) && blacklist.contains(key.getPath());
     }
 
     public CompoundTag save(CompoundTag tag) {
+        saveForClient(tag);
+        tag.putInt("crystalDroppingCount", crystalDroppingCount);
+        tag.putInt("firstCrystalDroppingCount", firstCrystalDroppingCount);
+        tag.putInt("maxDropDistance", maxDropDistance);
+        tag.put("costConfig", costConfig.writeNbt(new CompoundTag()));
+        return tag;
+    }
+
+    public CompoundTag saveForClient(CompoundTag tag) {
         tag.putBoolean("blacklistEnabled", blacklistEnabled);
         ListTag blacklistTag = new ListTag();
         for (String item : blacklist) {
             blacklistTag.add(StringTag.valueOf(item));
         }
         tag.put("blacklist", blacklistTag);
-        tag.putInt("crystalDroppingCount", crystalDroppingCount);
-        tag.putInt("firstCrystalDroppingCount", firstCrystalDroppingCount);
-        tag.putInt("maxDropDistance", maxDropDistance);
-        tag.put("costConfig", costConfig.writeNbt(new CompoundTag()));
+        tag.putBoolean("forbidReplicatingCores", forbidReplicatingCores);
         return tag;
     }
 
@@ -65,6 +74,9 @@ public class ModConfig {
             for (int i = 0; i < blacklistTag.size(); i++) {
                 blacklist.add(blacklistTag.getString(i));
             }
+        }
+        if (tag.contains("forbidReplicatingCores")) {
+            forbidReplicatingCores = tag.getBoolean("forbidReplicatingCores");
         }
         if (tag.contains("crystalDroppingCount")) {
             crystalDroppingCount = tag.getInt("crystalDroppingCount");
@@ -84,6 +96,7 @@ public class ModConfig {
     public void reset() {
         blacklistEnabled = false;
         blacklist.clear();
+        forbidReplicatingCores = true;
         crystalDroppingCount = 1;
         firstCrystalDroppingCount = 3;
         maxDropDistance = 256;

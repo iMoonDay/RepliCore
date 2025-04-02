@@ -71,6 +71,8 @@ public class ReplicationScreen extends ItemCombinerScreen<ReplicationMenu> {
                             if (this.menu.getSlot(2).mayPickup(this.player)) {
                                 color = 0X80FF20;
                             }
+                        } else {
+                            component = TIER_MISMATCH_TEXT;
                         }
                     }
                 }

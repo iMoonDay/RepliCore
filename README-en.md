@@ -29,6 +29,8 @@
     "item_id",
     "item_id2"
   ],
+  // Copying replication cores is prohibited
+  "forbidReplicatingCores": true,
   // Dragon Soul Crystal drop count (post-first kill)
   "crystalDroppingCount": 1,
   // Dragon Soul Crystal drop count (first kill)
@@ -56,6 +58,28 @@
       // "Enchantment ID": Cost
       "enchantment_id": 1.0,
       "enchantment_id2": 1.5
+    }
+  },
+  // Default container config
+  "defaultContainerConfig": {
+    // Whether to calculate the cost of items in the container
+    "enabled": true,
+    // Whether to recursively calculate the cost of items in the container
+    "recursive": true,
+    // Whether to exclude the original cost of container
+    "excludeOriginalCost": false,
+    // The NBT tag path of container to parse items and use '.' to split
+    // The last element must be the list type data
+    "tag": "BlockEntityTag.Items"
+  },
+  // Customize container config, fields are the same as above
+  "customContainerConfigs": {
+    // "Item ID": Config
+    "minecraft:bundle": {
+      "enabled": true,
+      "recursive": true,
+      "excludeOriginalCost": false,
+      "tag": "Items"
     }
   }
 }

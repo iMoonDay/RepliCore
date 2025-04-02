@@ -29,6 +29,8 @@
     "item_id",
     "item_id2"
   ],
+  //禁止复制核心
+  "forbidReplicatingCores": true,
   //龙魂结晶掉落数量
   "crystalDroppingCount": 1,
   //龙魂结晶首次掉落数量
@@ -56,6 +58,27 @@
       //"附魔ID": 费用
       "enchantment_id": 1.0,
       "enchantment_id2": 1.5
+    },
+    //默认容器配置
+    "defaultContainerConfig": {
+      //是否计算容器内的物品费用
+      "enabled": true,
+      //是否递归计算容器内的物品费用
+      "recursive": true,
+      //是否排除原容器的费用
+      "excludeOriginalCost": false,
+      //检测容器物品的NBT标签路径，用“.”分割，最后一项需为列表类型数据
+      "tag": "BlockEntityTag.Items"
+    },
+    //自定义容器配置，配置同上
+    "customContainerConfigs": {
+      //"物品ID": 配置
+      "minecraft:bundle": {
+        "enabled": true,
+        "recursive": true,
+        "excludeOriginalCost": false,
+        "tag": "Items"
+      }
     }
   }
 }

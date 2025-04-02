@@ -39,7 +39,6 @@
   "message.replicore.blacklist_deny": "此物品被禁止复制！",
   "message.replicore.cost": "复制花费：%s",
   "message.replicore.no_full_durability": "需要完整的耐久！",
-  "message.replicore.reload": "[复制核心] 已重新加载配置",
   "message.replicore.tier_mismatch": "该核心无法复制此物品！",
   "modmenu.descriptionTranslation.replicore": "提供一个复制物品的途径",
   "modmenu.nameTranslation.replicore": "复制核心"

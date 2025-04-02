@@ -35,15 +35,22 @@ public class EventHandler {
 
     public static void syncConfig(Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            PlatformHelper.sendToPlayer(serverPlayer, new SyncConfigS2CPacket(ModConfig.get().save(new CompoundTag())));
+            PlatformHelper.sendToPlayer(serverPlayer, new SyncConfigS2CPacket(ModConfig.get().saveForClient(new CompoundTag())));
         }
     }
 
     public static void updateConfig(MinecraftServer server) {
-        PlatformHelper.sendToAllPlayers(server.getPlayerList().getPlayers(), new SyncConfigS2CPacket(ModConfig.get().save(new CompoundTag())));
+        if (server != null) {
+            PlatformHelper.sendToAllPlayers(server.getPlayerList().getPlayers(), new SyncConfigS2CPacket(ModConfig.get().saveForClient(new CompoundTag())));
+        }
     }
 
     public static void onDisconnect() {
         ModConfig.getClientCache().reset();
+    }
+
+    public static void onReload(MinecraftServer server) {
+        loadConfig();
+        updateConfig(server);
     }
 }
