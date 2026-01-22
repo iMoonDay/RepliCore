@@ -1,6 +1,9 @@
 {
   "block.replicore.replication_table": "复制台",
   "config.replicore.blacklist": "复制黑名单",
+  "config.replicore.whitelistEnabled": "启用白名单",
+  "config.replicore.whitelist": "复制白名单",
+  "config.replicore.list_tooltip": "支持物品ID或标签（以#开头）",
   "config.replicore.blacklistEnabled": "启用黑名单",
   "config.replicore.category.common": "通用",
   "config.replicore.costConfig.calculateEnchantmentCosts": "计算附魔费用",

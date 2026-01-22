@@ -34,6 +34,17 @@ public class ModConfigScreenFactory {
 
             ModConfig config = ModConfig.get();
 
+            category.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.replicore.whitelistEnabled"), config.whitelistEnabled)
+                                          .setDefaultValue(false)
+                                          .setSaveConsumer(newValue -> config.whitelistEnabled = newValue)
+                                          .build());
+
+            category.addEntry(entryBuilder.startStrList(Component.translatable("config.replicore.whitelist"), config.whitelist)
+                                          .setDefaultValue(new ArrayList<>())
+                                          .setSaveConsumer(newValue -> config.whitelist = newValue)
+                                          .setTooltip(Component.translatable("config.replicore.list_tooltip"))
+                                          .build());
+
             category.addEntry(entryBuilder.startBooleanToggle(Component.translatable("config.replicore.blacklistEnabled"), config.blacklistEnabled)
                                           .setDefaultValue(false)
                                           .setSaveConsumer(newValue -> config.blacklistEnabled = newValue)
@@ -42,6 +53,7 @@ public class ModConfigScreenFactory {
             category.addEntry(entryBuilder.startStrList(Component.translatable("config.replicore.blacklist"), config.blacklist)
                                           .setDefaultValue(new ArrayList<>())
                                           .setSaveConsumer(newValue -> config.blacklist = newValue)
+                                          .setTooltip(Component.translatable("config.replicore.list_tooltip"))
                                           .build());
 
             category.addEntry(entryBuilder.startIntField(Component.translatable("config.replicore.crystalDroppingCount"), config.crystalDroppingCount)

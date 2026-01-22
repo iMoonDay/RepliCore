@@ -21,13 +21,23 @@
 
 ```json5
 {
+  //启用白名单
+  "whitelistEnabled": false,
+  //复制白名单
+  "whitelist": [
+    //"物品ID/#物品标签"
+    "item_id",
+    "item_id2",
+    "#item_tag"
+  ],
   //启用黑名单
   "blacklistEnabled": false,
   //复制黑名单
   "blacklist": [
-    //"物品ID"
+    //"物品ID/#物品标签"
     "item_id",
-    "item_id2"
+    "item_id2",
+    "#item_tag"
   ],
   //禁止复制核心
   "forbidReplicatingCores": true,

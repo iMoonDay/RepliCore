@@ -10,7 +10,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -28,19 +32,60 @@ public class ModConfig {
     private static ModConfig clientCache;
     private static File configFile;
 
-    public boolean blacklistEnabled = false;
-    public List<String> blacklist = new ArrayList<>();
-    public boolean forbidReplicatingCores = true;
-    public int crystalDroppingCount = 1;
-    public int firstCrystalDroppingCount = 3;
-    public int maxDropDistance = 256;
-    public CostConfig costConfig = new CostConfig();
+    public boolean whitelistEnabled = false; //启用白名单
+    public List<String> whitelist = new ArrayList<>(); //复制白名单
+    public boolean blacklistEnabled = false; //启用黑名单
+    public List<String> blacklist = new ArrayList<>(); //复制黑名单
+    public boolean forbidReplicatingCores = true; //禁止复制核心
+    public int crystalDroppingCount = 1; //龙魂结晶掉落数量
+    public int firstCrystalDroppingCount = 3; //龙魂结晶首次掉落数量
+    public int maxDropDistance = 256; //龙魂结晶掉落范围
+    public CostConfig costConfig = new CostConfig(); //费用配置
 
     public boolean isBlacklisted(ItemStack stack) {
         if (forbidReplicatingCores && stack.getItem() instanceof CoreItem) return true;
-        if (!blacklistEnabled) return false;
+
+        if (whitelistEnabled && matches(stack, whitelist)) {
+            return false;
+        }
+
+        if (blacklistEnabled && matches(stack, blacklist)) {
+            return true;
+        }
+
+        return whitelistEnabled;
+    }
+
+    private boolean matches(ItemStack stack, List<String> list) {
         ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        return blacklist.contains(key.toString()) || key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE) && blacklist.contains(key.getPath());
+        String id = key.toString();
+        String path = key.getPath();
+        boolean isDefaultNamespace = key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+
+        for (String entry : list) {
+            if (entry.startsWith("#")) {
+                String tagId = entry.substring(1);
+                ResourceLocation tagLocation = ResourceLocation.tryParse(tagId);
+                if (tagLocation != null) {
+                    TagKey<Item> itemKey = TagKey.create(BuiltInRegistries.ITEM.key(), tagLocation);
+                    if (stack.is(itemKey)) {
+                        return true;
+                    }
+
+                    if (stack.getItem() instanceof BlockItem blockItem) {
+                        TagKey<Block> blockKey = TagKey.create(BuiltInRegistries.BLOCK.key(), tagLocation);
+                        if (blockItem.getBlock().builtInRegistryHolder().is(blockKey)) {
+                            return true;
+                        }
+                    }
+                }
+            } else {
+                if (entry.equals(id) || (isDefaultNamespace && entry.equals(path))) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public CompoundTag save(CompoundTag tag) {
@@ -53,6 +98,12 @@ public class ModConfig {
     }
 
     public CompoundTag saveForClient(CompoundTag tag) {
+        tag.putBoolean("whitelistEnabled", whitelistEnabled);
+        ListTag whitelistTag = new ListTag();
+        for (String item : whitelist) {
+            whitelistTag.add(StringTag.valueOf(item));
+        }
+        tag.put("whitelist", whitelistTag);
         tag.putBoolean("blacklistEnabled", blacklistEnabled);
         ListTag blacklistTag = new ListTag();
         for (String item : blacklist) {
@@ -65,6 +116,16 @@ public class ModConfig {
 
     public void load(CompoundTag tag) {
         if (tag == null) return;
+        if (tag.contains("whitelistEnabled")) {
+            whitelistEnabled = tag.getBoolean("whitelistEnabled");
+        }
+        if (tag.contains("whitelist")) {
+            whitelist.clear();
+            ListTag whitelistTag = tag.getList("whitelist", 8);
+            for (int i = 0; i < whitelistTag.size(); i++) {
+                whitelist.add(whitelistTag.getString(i));
+            }
+        }
         if (tag.contains("blacklistEnabled")) {
             blacklistEnabled = tag.getBoolean("blacklistEnabled");
         }
@@ -94,6 +155,8 @@ public class ModConfig {
     }
 
     public void reset() {
+        whitelistEnabled = false;
+        whitelist.clear();
         blacklistEnabled = false;
         blacklist.clear();
         forbidReplicatingCores = true;

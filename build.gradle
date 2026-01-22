@@ -43,6 +43,9 @@ subprojects {
             officialMojangMappings()
             parchment("org.parchmentmc.data:parchment-1.20.1:2023.09.03@zip")
         }
+
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
     }
 
     java {

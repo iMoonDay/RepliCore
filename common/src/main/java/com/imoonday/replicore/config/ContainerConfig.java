@@ -1,5 +1,7 @@
 package com.imoonday.replicore.config;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -9,44 +11,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Data
+@Accessors(chain = true)
 public class ContainerConfig {
 
-    private boolean enabled = true;
-    private boolean recursive = true;
-    private boolean excludeOriginalCost = false;
-    private String tag = "BlockEntityTag.Items";
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean isRecursive() {
-        return recursive;
-    }
-
-    public void setRecursive(boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public boolean isExcludeOriginalCost() {
-        return excludeOriginalCost;
-    }
-
-    public void setExcludeOriginalCost(boolean excludeOriginalCost) {
-        this.excludeOriginalCost = excludeOriginalCost;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public void setTag(String tag) {
-        this.tag = tag;
-    }
+    private boolean enabled = true; //是否计算容器内的物品费用
+    private boolean recursive = true; //是否递归计算容器内的物品费用
+    private boolean excludeOriginalCost = false; //是否排除原容器的费用
+    private String tag = "BlockEntityTag.Items"; //检测容器物品的NBT标签路径，用“.”分割，最后一项需为列表类型数据
 
     public CompoundTag writeNbt() {
         CompoundTag tag = new CompoundTag();

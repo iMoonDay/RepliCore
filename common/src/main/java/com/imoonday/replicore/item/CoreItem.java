@@ -1,6 +1,7 @@
 package com.imoonday.replicore.item;
 
 import com.imoonday.replicore.core.CoreTier;
+import lombok.Getter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -12,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+@Getter
 public class CoreItem extends Item {
 
     private final CoreTier tier;
@@ -19,10 +21,6 @@ public class CoreItem extends Item {
     public CoreItem(CoreTier tier, Properties properties) {
         super(properties);
         this.tier = tier;
-    }
-
-    public CoreTier getTier() {
-        return tier;
     }
 
     public boolean canDuplicate(ItemStack stack) {

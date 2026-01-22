@@ -1,3 +1,2 @@
-1. The sound effects will only be played once when copying with multiple replication cores
-2. By default, the replication cores are prohibited as the replication target.
-3. Can identify container items containing items, such as shulker boxes, bundles, chest with NBTs, etc. (Can be customized)
+1. Add whitelist | 添加白名单
+2. Fixed the issue where dragon soul crystals could not be dropped normally | 修复无法正常掉落龙魂结晶的问题

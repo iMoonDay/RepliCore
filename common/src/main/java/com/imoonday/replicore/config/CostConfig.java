@@ -1,6 +1,6 @@
 package com.imoonday.replicore.config;
 
-import net.minecraft.Util;
+import lombok.Data;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -19,99 +19,34 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Data
 public class CostConfig {
 
-    private double defaultCost = 0.25;
-    private Map<String, Double> customCosts = new HashMap<>();
-    private boolean calculateEnchantmentCosts = true;
-    private double defaultEnchantmentCost = 2.0;
-    private boolean ignoreCurses = true;
-    private Map<String, Double> customEnchantmentCosts = new HashMap<>();
-    private ContainerConfig defaultContainerConfig = new ContainerConfig();
-    private Map<String, ContainerConfig> customContainerConfigs = Util.make(new HashMap<>(), map -> {
-        ContainerConfig config = new ContainerConfig();
-        config.setTag("Items");
-        map.put("minecraft:bundle", config);
-    });
-
-    public double getDefaultCost() {
-        return defaultCost;
-    }
-
-    public void setDefaultCost(double defaultCost) {
-        this.defaultCost = defaultCost;
-    }
-
-    public Map<String, Double> getCustomCosts() {
-        return customCosts;
-    }
+    private double defaultCost = 0.25; //默认费用
+    private Map<String, Double> customCosts = new HashMap<>(); //自定义费用
+    private boolean calculateEnchantmentCosts = true; //计算附魔费用
+    private double defaultEnchantmentCost = 2.0; //默认附魔费用
+    private boolean ignoreCurses = true; //忽略诅咒附魔
+    private Map<String, Double> customEnchantmentCosts = new HashMap<>(); //自定义附魔费用
+    private ContainerConfig defaultContainerConfig = new ContainerConfig(); //默认容器配置
+    private Map<String, ContainerConfig> customContainerConfigs = new HashMap<>() {{ //自定义容器配置
+        put("minecraft:bundle", new ContainerConfig().setTag("Items"));
+    }};
 
     public List<String> getCustomCostList() {
         return mapMapToList(customCosts);
-    }
-
-    public void setCustomCosts(Map<String, Double> customCosts) {
-        this.customCosts = customCosts;
     }
 
     public void setCustomCostFromList(List<String> customCostList) {
         this.customCosts = mapListToMap(customCostList);
     }
 
-    public boolean isCalculateEnchantmentCosts() {
-        return calculateEnchantmentCosts;
-    }
-
-    public void setCalculateEnchantmentCosts(boolean calculateEnchantmentCosts) {
-        this.calculateEnchantmentCosts = calculateEnchantmentCosts;
-    }
-
-    public double getDefaultEnchantmentCost() {
-        return defaultEnchantmentCost;
-    }
-
-    public void setDefaultEnchantmentCost(double defaultEnchantmentCost) {
-        this.defaultEnchantmentCost = defaultEnchantmentCost;
-    }
-
-    public boolean isIgnoreCurses() {
-        return ignoreCurses;
-    }
-
-    public void setIgnoreCurses(boolean ignoreCurses) {
-        this.ignoreCurses = ignoreCurses;
-    }
-
-    public Map<String, Double> getCustomEnchantmentCosts() {
-        return customEnchantmentCosts;
-    }
-
     public List<String> getCustomEnchantmentCostList() {
         return mapMapToList(customEnchantmentCosts);
     }
 
-    public void setCustomEnchantmentCosts(Map<String, Double> customEnchantmentCosts) {
-        this.customEnchantmentCosts = customEnchantmentCosts;
-    }
-
     public void setCustomEnchantmentCostFromList(List<String> customEnchantmentCostList) {
         this.customEnchantmentCosts = mapListToMap(customEnchantmentCostList);
-    }
-
-    public ContainerConfig getDefaultContainerConfig() {
-        return defaultContainerConfig;
-    }
-
-    public void setDefaultContainerConfig(ContainerConfig defaultContainerConfig) {
-        this.defaultContainerConfig = defaultContainerConfig;
-    }
-
-    public Map<String, ContainerConfig> getCustomContainerConfigs() {
-        return customContainerConfigs;
-    }
-
-    public void setCustomContainerConfigs(Map<String, ContainerConfig> customContainerConfigs) {
-        this.customContainerConfigs = customContainerConfigs;
     }
 
     public int calculateTotalCost(ItemStack stack, Predicate<ItemStack> except) {
@@ -268,34 +203,5 @@ public class CostConfig {
             }
         }
         return null;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (CostConfig) obj;
-        return Double.doubleToLongBits(this.defaultCost) == Double.doubleToLongBits(that.defaultCost) &&
-               Objects.equals(this.customCosts, that.customCosts) &&
-               this.calculateEnchantmentCosts == that.calculateEnchantmentCosts &&
-               Double.doubleToLongBits(this.defaultEnchantmentCost) == Double.doubleToLongBits(that.defaultEnchantmentCost) &&
-               this.ignoreCurses == that.ignoreCurses &&
-               Objects.equals(this.customEnchantmentCosts, that.customEnchantmentCosts);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(defaultCost, customCosts, calculateEnchantmentCosts, defaultEnchantmentCost, ignoreCurses, customEnchantmentCosts);
-    }
-
-    @Override
-    public String toString() {
-        return "CostConfig[" +
-               "defaultCost=" + defaultCost + ", " +
-               "customCosts=" + customCosts + ", " +
-               "calculateEnchantmentCosts=" + calculateEnchantmentCosts + ", " +
-               "defaultEnchantmentCost=" + defaultEnchantmentCost + ", " +
-               "ignoreCurses=" + ignoreCurses + ", " +
-               "customEnchantmentCosts=" + customEnchantmentCosts + ']';
     }
 }
