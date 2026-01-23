@@ -60,7 +60,8 @@ public class ModConfig {
         ResourceLocation key = BuiltInRegistries.ITEM.getKey(stack.getItem());
         String id = key.toString();
         String path = key.getPath();
-        boolean isDefaultNamespace = key.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE);
+
+        String namespace = key.getNamespace();
 
         for (String entry : list) {
             if (entry.startsWith("#")) {
@@ -79,8 +80,22 @@ public class ModConfig {
                         }
                     }
                 }
+            } else if (entry.startsWith("@")) {
+                String modId = entry.substring(1);
+                if (namespace.equals(modId)) {
+                    return true;
+                }
+            } else if (entry.startsWith("$")) {
+                String regex = entry.substring(1);
+                try {
+                    if (id.matches(regex)) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    LOGGER.warn("Invalid regex in config: {}", regex);
+                }
             } else {
-                if (entry.equals(id) || (isDefaultNamespace && entry.equals(path))) {
+                if (entry.equals(id) || namespace.equals(ResourceLocation.DEFAULT_NAMESPACE) && entry.equals(path)) {
                     return true;
                 }
             }

@@ -3,7 +3,7 @@
   "config.replicore.blacklist": "Replication Blacklist",
   "config.replicore.whitelistEnabled": "Enable Whitelist",
   "config.replicore.whitelist": "Whitelist",
-  "config.replicore.list_tooltip": "Supports Item ID or Tags (starting with #)",
+  "config.replicore.list_tooltip": "Supports Item ID, Tags (starting with #), Mod ID (starting with @) or Regex (starting with $)",
   "config.replicore.blacklistEnabled": "Enable Blacklist",
   "config.replicore.category.common": "Common",
   "config.replicore.costConfig.calculateEnchantmentCosts": "Calculate Enchantment Costs",
