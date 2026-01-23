@@ -25,19 +25,21 @@
   "whitelistEnabled": false,
   // Replication whitelist
   "whitelist": [
-    // "Item ID / #Item Tag"
+    // "Item ID / #Item Tag / @Mod ID / $Regex"
     "item_id",
-    "item_id2",
-    "#item_tag"
+    "#item_tag",
+    "@minecraft",
+    "$minecraft:.*_sword"
   ],
   // Enable blacklist
   "blacklistEnabled": false,
   // Replication blacklist
   "blacklist": [
-    // "Item ID / #Item Tag"
+    // "Item ID / #Item Tag / @Mod ID / $Regex"
     "item_id",
-    "item_id2",
-    "#item_tag"
+    "#item_tag",
+    "@minecraft",
+    "$minecraft:.*_sword"
   ],
   // Copying replication cores is prohibited
   "forbidReplicatingCores": true,

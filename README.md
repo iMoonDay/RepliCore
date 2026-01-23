@@ -25,19 +25,21 @@
   "whitelistEnabled": false,
   //复制白名单
   "whitelist": [
-    //"物品ID/#物品标签"
+    //"物品ID/#物品标签/@模组ID/$正则匹配"
     "item_id",
-    "item_id2",
-    "#item_tag"
+    "#item_tag",
+    "@minecraft",
+    "$minecraft:.*_sword"
   ],
   //启用黑名单
   "blacklistEnabled": false,
   //复制黑名单
   "blacklist": [
-    //"物品ID/#物品标签"
+    //"物品ID/#物品标签/@模组ID/$正则匹配"
     "item_id",
-    "item_id2",
-    "#item_tag"
+    "#item_tag",
+    "@minecraft",
+    "$minecraft:.*_sword"
   ],
   //禁止复制核心
   "forbidReplicatingCores": true,
